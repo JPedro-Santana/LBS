@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LBS</string>
+    <string name="Location">Location Information</string>
+    <string name="Gnss_Status">GNSS Information</string>
+</resources>

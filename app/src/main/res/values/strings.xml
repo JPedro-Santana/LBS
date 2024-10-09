@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">LBS</string>
+    <string name="Location">Informações de Localização</string>
+    <string name="Gnss_Status">Informações do Sistema de Satélites</string>
+
+</resources>
