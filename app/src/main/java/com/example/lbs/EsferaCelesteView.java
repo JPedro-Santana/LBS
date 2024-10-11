@@ -16,10 +16,19 @@ import androidx.annotation.Nullable;
 public class EsferaCelesteView extends View {
     private Location newLocation;
     private GnssStatus newStatus;
-    private ImageView bandeira_eua, bandeira_ue, bandeira_russia;
     private Paint paint;
     private int r;
     private int height,width;
+
+    /* public ImageView(Context context) {
+        super(context);
+        ImageView = new ArrayList<>();
+
+        // Inicializar os dados dos satélites (exemplo)
+        satellites.add(new Satellite(1, "GPS", true, 45, 30));
+        satellites.add(new Satellite(2, "Galileo", false, 60, 45));
+        satellites.add(new Satellite(3, "Glonass", true, 90, 60));
+    }*/
 
     public EsferaCelesteView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -59,24 +68,16 @@ public class EsferaCelesteView extends View {
         canvas.drawLine(computeXc(0),computeYc(-r),computeXc(0),computeYc(r),paint);
         canvas.drawLine(computeXc(-r),computeYc(0),computeXc(r),computeYc(0),paint);
 
-        // configurando o pincel para desenhar os satélites
+        int CONSTELLATION_GALILEO;
 
+        int CONSTELLATION_GLONASS;
 
-
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL);
+        int CONSTELLATION_GPS;
         // desenhando os satélites (caso exista um GnssStaus disponível)
         if (newStatus!=null) {
             for(int i=0;i<newStatus.getSatelliteCount();i++) {
                 float az=newStatus.getAzimuthDegrees(i);
                 float el=newStatus.getElevationDegrees(i);
-                float x=(float)(r*Math.cos(Math.toRadians(el))*Math.sin(Math.toRadians(az)));
-                float y=(float)(r*Math.cos(Math.toRadians(el))*Math.cos(Math.toRadians(az)));
-                canvas.drawCircle(computeXc(x), computeYc(y), 10, paint);
-                paint.setTextAlign(Paint.Align.LEFT);
-                paint.setTextSize(30);
-                String satID=newStatus.getSvid(i)+"";
-                canvas.drawText(satID, computeXc(x)+10, computeYc(y)+10, paint);
 
             }
         }

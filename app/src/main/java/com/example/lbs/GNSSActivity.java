@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.GnssStatus;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,6 +42,10 @@ public class GNSSActivity extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         obtemLocationProvider_Permission();
     }
+
+    LinearLayout layout = findViewById(R.id.gnssViewLayout);
+    SatelliteSignalView signalView = new SatelliteSignalView(this);
+        layout.addView(signalView);
 
     public void obtemLocationProvider_Permission() {
         // Verifica se a aplicação tem acesso a sistema de localização
@@ -144,6 +149,48 @@ public class GNSSActivity extends AppCompatActivity {
         textView.setText(mens);
     }
 
+    private Paint paint;
+    private void init() {
+        paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(40);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        // Exibir as coordenadas do usuário
+        String positionText = "Lat: " + latitude + " Lon: " + longitude + " Alt: " + altitude;
+        canvas.drawText(positionText, 10, 100, paint);
+
+        // Desenhar uma seta simples para indicar o rumo
+        float startX = getWidth() / 2;
+        float startY = getHeight() / 2;
+        float endX = (float) (startX + 100 * Math.sin(Math.toRadians(heading)));
+        float endY = (float) (startY - 100 * Math.cos(Math.toRadians(heading)));
+
+        paint.setColor(Color.BLUE);
+        canvas.drawLine(startX, startY, endX, endY, paint);
+        canvas.drawCircle(startX, startY, 10, paint);
+    }
+
+    public void updatePosition(double lat, double lon, double alt, float heading) {
+        this.latitude = lat;
+        this.longitude = lon;
+        this.altitude = alt;
+        this.heading = heading;
+        invalidate();
+    }
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        // Lógica para abrir a caixa de diálogo de formato de coordenadas
+        Toast.makeText(getContext(), "Configurar formato de coordenadas", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             showCoordinatesOptions();
@@ -167,7 +214,7 @@ public class GNSSActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Configurar formato de apresentação das coordenadas geográficas.")
-                .setSingleChoiceItems(coordinates, checkedItem, (dialog, which) -> {
+                .setItems(coordinates, checkedItem, (dialog, which) -> {
                     currentColor = colorValues[which];
                     invalidate();
 
