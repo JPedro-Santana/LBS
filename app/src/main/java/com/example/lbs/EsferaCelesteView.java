@@ -20,7 +20,7 @@ public class EsferaCelesteView extends View {
     private int r;
     private int height,width;
 
-    /* public ImageView(Context context) {
+     public ImageView(Context context) {
         super(context);
         ImageView = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public class EsferaCelesteView extends View {
         satellites.add(new Satellite(1, "GPS", true, 45, 30));
         satellites.add(new Satellite(2, "Galileo", false, 60, 45));
         satellites.add(new Satellite(3, "Glonass", true, 90, 60));
-    }*/
+    }
 
     public EsferaCelesteView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -54,7 +54,7 @@ public class EsferaCelesteView extends View {
         // configurando o pincel para desenhar a projeção da esfera celeste
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
-        paint.setColor(Color.BLUE);
+        paint.setColor(Color.BLACK);
         // desenha a projeção da esfera celeste
         // desenhando círculos concêntricos
         int radius=r;
@@ -68,11 +68,15 @@ public class EsferaCelesteView extends View {
         canvas.drawLine(computeXc(0),computeYc(-r),computeXc(0),computeYc(r),paint);
         canvas.drawLine(computeXc(-r),computeYc(0),computeXc(r),computeYc(0),paint);
 
-        int CONSTELLATION_GALILEO;
+        private String getConstellation(int constellationType) {
+            switch (constellationType) {
+                case GnssStatus.CONSTELLATION_GPS:
+                    return "GPS";
+                case GnssStatus.CONSTELLATION_GLONASS:
+                    return "GLONASS";
+                case GnssStatus.CONSTELLATION_GALILEO:
+                    return "GALILEO";
 
-        int CONSTELLATION_GLONASS;
-
-        int CONSTELLATION_GPS;
         // desenhando os satélites (caso exista um GnssStaus disponível)
         if (newStatus!=null) {
             for(int i=0;i<newStatus.getSatelliteCount();i++) {

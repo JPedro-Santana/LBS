@@ -8,11 +8,15 @@
 
     <LinearLayout
         android:id="@+id/Componente1"
-        android:layout_width="408dp"
-        android:layout_height="108dp"
+        android:layout_width="410dp"
+        android:layout_height="171dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="2dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        app:layout_constraintBottom_toTopOf="@+id/Componente2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textviewLocation_id"
@@ -20,13 +24,28 @@
             android:layout_height="wrap_content"
             android:text="@string/Location"
             android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/buttonShowDialog"
+            android:layout_width="match_parent"
+            android:layout_height="89dp"
+            android:text="Button"
+            tools:visibility="invisible" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/Componente2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="405dp"
+        android:layout_height="399dp"
+        android:layout_marginTop="171dp"
+        android:layout_marginBottom="171dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/Componente3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <include layout="@layout/esfera_celeste_layout"></include>
 
@@ -34,19 +53,23 @@
 
     <LinearLayout
         android:id="@+id/Componente3"
-        android:layout_width="412dp"
-        android:layout_height="155dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="574dp" />
-
-    <TextView
-        android:id="@+id/textviewGnss_id"
         android:layout_width="407dp"
-        android:layout_height="467dp"
-        android:text="@string/Gnss_Status"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="108dp" />
+        android:layout_height="151dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Componente2">
+
+        <TextView
+            android:id="@+id/textviewGnss_id"
+            android:layout_width="372dp"
+            android:layout_height="51dp"
+            android:text="@string/Gnss_Status"
+            android:textSize="20sp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

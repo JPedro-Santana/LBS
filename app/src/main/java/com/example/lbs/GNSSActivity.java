@@ -1,20 +1,15 @@
 package com.example.lbs;
 
+import static android.location.Location.FORMAT_SECONDS;
 import static android.location.Location.FORMAT_DEGREES;
 import static android.location.Location.FORMAT_MINUTES;
-import static android.location.Location.FORMAT_SECONDS;
-import static java.security.AccessController.getContext;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.location.GnssStatus;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,18 +18,14 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.Manifest;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 
 public class GNSSActivity extends AppCompatActivity {
     private LocationManager locationManager; // O Gerente de localização
     private LocationProvider locationProvider; // O provedor de localizações
     private static final int REQUEST_LOCATION = 1;
+    private String selectedFormat = "Graus [+/-DDD.DDDDD]";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +34,6 @@ public class GNSSActivity extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         obtemLocationProvider_Permission();
     }
-
-   /* LinearLayout layout = findViewById(R.id.gnssViewLayout);
-    SatelliteSignalView signalView = new SatelliteSignalView(this);
-        layout.addView(signalView);*/
 
     public void obtemLocationProvider_Permission() {
         // Verifica se a aplicação tem acesso a sistema de localização
@@ -88,8 +75,9 @@ public class GNSSActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(locationProvider.getName(), 1000, 0.1f, new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                    mostraLocation(location);
+                mostraLocation(location);
             }
+
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 LocationListener.super.onStatusChanged(provider, status, extras);
@@ -100,48 +88,62 @@ public class GNSSActivity extends AppCompatActivity {
             public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
                 super.onSatelliteStatusChanged(status);
                 mostraGNSS(status);
-                mostraGNSSGrafico(status);
+               mostraGNSSGrafico(status);
             }
         });
     }
+
     public void mostraGNSSGrafico(GnssStatus status) {
-        EsferaCelesteView esferaCelesteView=findViewById(R.id.esferacelesteview_id);
+        EsferaCelesteView esferaCelesteView = findViewById(R.id.esferacelesteview_id);
         esferaCelesteView.setNewStatus(status);
     }
 
     public void mostraGNSS(GnssStatus status) {
         TextView textView = findViewById(R.id.textviewGnss_id);
-        String mens="Dados do Sitema de Posicionamento\n";
-        if (status!=null) {
-            mens+="Número de Satélites:"+status.getSatelliteCount()+"\n";
-            for(int i=0;i<status.getSatelliteCount();i++) {
-                mens+="SVID-CONST-SNR="
-                        +status.getSvid(i)+"-"
-                        +status.getConstellationType(i)+"-"
-                        +status.getCn0DbHz(i)+
-                        "Azi="+status.getAzimuthDegrees(i)+
-                        "Elev="+status.getElevationDegrees(i)+"\n";
+        String mens = "Dados do Sitema de Posicionamento\n";
+        if (status != null) {
+            mens += "Número de Satélites:" + status.getSatelliteCount() + "\n";
+            for (int i = 0; i < status.getSatelliteCount(); i++) {
+                mens += "SVID-CONST-SNR="
+                        + status.getSvid(i) + "-"
+                        + status.getConstellationType(i) + "-"
+                        + status.getCn0DbHz(i) +
+                        "Azi=" + status.getAzimuthDegrees(i) +
+                        "Elev=" + status.getElevationDegrees(i) + "\n";
 
             }
-        }
-        else {
-            mens+="GNSS Não disponível";
+        } else {
+            mens += "GNSS Não disponível";
         }
         textView.setText(mens);
     }
+
     public void mostraLocation(Location location) {
-        TextView textView=findViewById(R.id.textviewLocation_id);
-        String mens="Dados da Última posição\n";
-        if (location!=null) {
-            mens+=String.valueOf("Latitude(graus)="
-                    +Location.convert(location.getLatitude(), FORMAT_SECONDS))+"\n"
-                    +String.valueOf("Longitude(graus)="
-                    +Location.convert(location.getLongitude(), FORMAT_SECONDS))+"\n"
-                    +String.valueOf("Velocidade(m/s)="+location.getSpeed())+"\n"
-                    +String.valueOf("Rumo(graus)="+location.getBearing());
+        TextView textView = findViewById(R.id.textviewLocation_id);
+        String mens = "Dados da Última posição\n";
+        if (location != null) {
+            mens += String.valueOf("Latitude(graus)="
+                    + Location.convert(location.getLatitude(), FORMAT_SECONDS)) + "\n"
+                    + String.valueOf("Longitude(graus)="
+                    + Location.convert(location.getLongitude(), FORMAT_SECONDS)) + "\n"
+                    + String.valueOf("Velocidade(m/s)=" + location.getSpeed()) + "\n"
+                    + String.valueOf("Rumo(graus)=" + location.getBearing());
+        } else {
+            mens += "Localização Não disponível";
         }
-        else {
-            mens+="Localização Não disponível";
+        switch (selectedFormat) {
+            case "Graus [+/-DDD.DDDDD]":
+                String r =  String.valueOf("Latitude(graus)="
+                        + Location.convert(location.getLatitude(), FORMAT_DEGREES)) + "\n"
+                        + String.valueOf("Longitude(graus)="
+                        + Location.convert(location.getLongitude(), FORMAT_DEGREES));
+                break;
+            case "Graus-Minutos [+/-DDD:MM.MMMMM]":
+                String s = String.valueOf("Latitude(graus)="
+                        + Location.convert(location.getLatitude(), FORMAT_MINUTES)) + "\n"
+                        + String.valueOf("Longitude(graus)="
+                        + Location.convert(location.getLongitude(), FORMAT_MINUTES));
+                break;
         }
         textView.setText(mens);
     }
@@ -154,35 +156,18 @@ public class GNSSActivity extends AppCompatActivity {
         return false;
     }
 
-    private String showCoordinatesOptions() {
-
-        final int [] coordinatesValues = {Location.FORMAT_DEGREES, Location.FORMAT_MINUTES, Location.FORMAT_SECONDS};
-
-    public void mudarCoordenada(){
+    public void showCoordinatesOptions(){
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         final String[] coordinates = {"Graus [+/-DDD.DDDDD]", "Graus-Minutos [+/-DDD:MM.MMMMM]", "Graus-Minutos-Segundos [+/-DDD:MM:SS.SSSSS]"};
         builder.setTitle("Configurar formato de apresentação das coordenadas geográficas:");
-        builder.setSingleChoiceItems(coordinates,0,DialogInterface.OnClickListener {dialog, which ->});
-        dialog.dismiss();
-    })
-            .create()
-                .show();
-}
+        builder.setSingleChoiceItems(coordinates, 0, null);
+        builder.setPositiveButton("Salvar", (dialog, which) -> {
+            selectedFormat = coordinates[((android.app.AlertDialog) dialog).getListView().getCheckedItemPosition()];
+            dialog.dismiss();
+        });
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+        builder.create().show();
 
-    public boolean performClick() {
-        // Lógica para abrir a caixa de diálogo de formato de coordenadas
-        Toast.makeText(GNSSActivity.this, "Configurar formato de coordenadas", Toast.LENGTH_SHORT).show();
-        return true;
     }
-
-       /* int checkedItem = -1;
-        for (int i = 0; i < coordinatesValues.length; i++) {
-            int Currentcoordinates;
-            if (Currentcoordinates == coordinatesValues[i]) {
-                checkedItem = i;
-                break;
-            }*/
-        }
-
-
 }
